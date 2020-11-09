@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<head>
+
+</head>
+<Body onload="create()">
+    <table><tr><td><button onclick="start()"> Start </button></td>
+               <td>Score  : <label id="score"> 0 </label> </td>
+               <td>Level (between 1 and 10):
+                    <input type="number" id="level" value = "1", min="1" max="10" 
+                        onchange="levelChange()">
+               </td></tr></table>
+    <div id="game"></div>
+
+    <script>
+        var blank = "blank.png";
+        var fail = "red.png";
+        var success = "green.png";
+        var dog = "dog.png";
+        var empty = [];
+        var dogs = [];
+        var level = 1;
+        var rows = 6;
+        var columns = 6;
+        var width = 50;
+        var height = 50;
+        var score = 0;
+        var hit = 10;
+        var miss = -1;
+        var showThread = 1;
+        var clearthread = 1;
+        var generationTime = 1;
+        var showTime = 5;
+        var gametime = 30;
+
+        function levelChange(){
+            level = parseInt(document.getElementById("level").value);
+            rows = 5 + level;
+            columns = 5 + level;
+            miss = level * -1;
+            generationTime = 1.1 - 0.1 * level ;
+            showTime = 5.25 - 0.25 * level;
+            gametime = 20 + 10 * level;
+            create();
+        }
+
+        function create() {
+            clearTimeout(showThread);
+            clearTimeout(clearthread);
+            var tableStr = "<table>"
+            var pos = 0;
+            for (var row=0; row < rows; row++) {
+                tableStr += "<tr>";
+                for(var column=0; column < columns; column++) {
+                    pos++;
+                    tableStr += "<td > <img id='" + pos + 
+                        "' width=" + width + " height=" + height +          
+                        " src = '" + blank + 
+                        "' onclick = 'clicked(this.id)'/>";
+                    empty.push(pos);                    
+                    tableStr += "</td>";
+                }
+                tableStr += "</tr>";
+            }
+            tableStr += "</table>";
+            document.getElementById("game").innerHTML = tableStr
+        }
+
+        function start() {
+            score = 0;            
+            empty = [];
+            dogs = [];
+            create();
+            document.getElementById("score").innerHTML = score;
+            showThread = setInterval(show, generationTime * 1000);
+            clearthread = setTimeout(stopShowThread, gametime*1000);
+        }
+        function stopShowThread() {
+            clearTimeout(showThread);   
+            alert("Game Over")
+        }
+        function show(){           
+            var selectedPos = Math.floor(Math.random() * (empty.length -1)); 
+            selectedId = empty[selectedPos];
+            document.getElementById(selectedId).src = dog;
+            dogs.push(selectedId);
+            empty.splice(selectedPos, 1);
+            setTimeout(clear, showTime*1000, selectedId);
+            if(empty.length == 0){
+                clearTimeout(showThread);
+                clearTimeout(clearthread);
+                stopShowThread();
+            }
+        }
+
+        function clear(id){
+            var dogPos = dogs.indexOf(id);
+            document.getElementById(id).src = blank;
+            empty.push(id);
+            dogs.splice(dogPos, 1);
+        }
+
+        function clicked(id){
+            var hitPos = dogs.indexOf(parseInt(id));
+            if(hitPos != -1){
+                document.getElementById(id).src = success;
+                score += hit;
+            } else {
+                document.getElementById(id).src = fail;
+                score += miss;
+            }
+            document.getElementById("score").innerHTML = score;
+        }
+    </script>
+</Body>
