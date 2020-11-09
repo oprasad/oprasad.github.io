@@ -19,8 +19,8 @@
         var empty = [];
         var dogs = [];
         var level = 1;
-        var rows = 6;
-        var columns = 6;
+        var rows = 3;
+        var columns = 3;
         var width = 50;
         var height = 50;
         var score = 0;
@@ -34,8 +34,8 @@
 
         function levelChange(){
             level = parseInt(document.getElementById("level").value);
-            rows = 5 + level;
-            columns = 5 + level;
+            rows = 2 + level;
+            columns = 2 + level;
             miss = level * -1;
             generationTime = 1.1 - 0.1 * level ;
             showTime = 5.25 - 0.25 * level;
